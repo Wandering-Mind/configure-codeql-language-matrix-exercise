@@ -8,8 +8,11 @@ jobs:
   CodeQL-Build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        language: [python, javascript]
+
     permissions:
-      # required for all workflows
       security-events: write
       actions: read
       contents: read
@@ -19,7 +22,13 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v1
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+          config-file: ./.github/codeql/codeql-config.yml
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v1
+        uses: github/codeql-action/analyze@v2
